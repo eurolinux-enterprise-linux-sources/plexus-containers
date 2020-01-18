@@ -10,7 +10,7 @@
 
 Name:           %{parent}-%{subname}
 Version:        1.5.5
-Release:        12%{?dist}
+Release:        14%{?dist}
 Summary:        Containers for Plexus
 License:        ASL 2.0 and MIT
 URL:            http://plexus.codehaus.org/
@@ -105,12 +105,9 @@ cp %{SOURCE2} plexus-component-annotations/build.xml
 # For Maven 3 compat
 %pom_add_dep org.apache.maven:maven-core plexus-component-metadata
 
-# OpenJDK7 compatibility
-%pom_xpath_replace "pom:profile[pom:id[text()='default-tools.jar']]/pom:activation" "
- <activation>
-    <activeByDefault>true</activeByDefault>
- </activation>
-" plexus-component-javadoc
+# Remove dependency on system-scoped tools.jar
+%pom_remove_dep com.sun:tools plexus-component-javadoc
+%pom_add_dep com.sun:tools plexus-component-javadoc
 
 # to prevent ant from failing
 mkdir -p plexus-component-annotations/src/test/java
@@ -141,6 +138,12 @@ sed -i "s|<version>2.3</version>|<version> %{javadoc_plugin_version}</version>|"
 %files javadoc -f .mfiles-javadoc
 
 %changelog
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 1.5.5-14
+- Mass rebuild 2013-12-27
+
+* Wed Nov 13 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.5.5-13
+- Remove dependency on system-scoped tools.jar
+
 * Fri Jun 28 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.5.5-12
 - Rebuild to regenerate API documentation
 - Resolves: CVE-2013-1571
